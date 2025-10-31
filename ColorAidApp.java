@@ -62,7 +62,7 @@ public class ColorAidApp {
         try {
             return DriverManager.getConnection(DB_URL);
         } catch (SQLException e) {
-            System.out.println("❌ Database connection failed: " + e.getMessage());
+            System.out.println("Database connection failed: " + e.getMessage());
             return null;
         }
     }
@@ -80,7 +80,7 @@ public class ColorAidApp {
             stmt.execute(usersTable);
             stmt.execute(resultsTable);
         } catch (SQLException e) {
-            System.out.println("❌ Could not create tables: " + e.getMessage());
+            System.out.println("Could not create tables: " + e.getMessage());
         }
     }
 
@@ -91,7 +91,7 @@ public class ColorAidApp {
         String p = sc.nextLine().trim();
 
         if (u.isEmpty() || p.isEmpty()) {
-            System.out.println("❌ Username or password cannot be empty.");
+            System.out.println("Username or password cannot be empty.");
             return;
         }
 
@@ -101,7 +101,7 @@ public class ColorAidApp {
             ps.setString(1, u);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                System.out.println("⚠️ Username already exists.");
+                System.out.println("Username already exists.");
                 return;
             }
 
@@ -110,9 +110,9 @@ public class ColorAidApp {
             ps.setString(1, u);
             ps.setString(2, p);
             ps.executeUpdate();
-            System.out.println("✅ Account created successfully!");
+            System.out.println(" Account created successfully!");
         } catch (SQLException e) {
-            System.out.println("❌ Signup failed: " + e.getMessage());
+            System.out.println("Signup failed: " + e.getMessage());
         }
     }
 
@@ -123,7 +123,7 @@ public class ColorAidApp {
         String p = sc.nextLine().trim();
 
         try (Connection conn = connectDB()) {
-            String query = "SELECT * FROM users WHERE username=? AND password=?";
+            String query  = "SELECT * FROM users WHERE username=? AND password=?";
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setString(1, u);
             ps.setString(2, p);
@@ -131,198 +131,171 @@ public class ColorAidApp {
 
             if (rs.next()) {
                 currentUsername = u;
-                System.out.println("✅ Welcome, " + u + "!");
+                System.out.println(" Welcome, " + u + "!");
                 return true;
             } else {
-                System.out.println("❌ Wrong credentials.");
+                System.out.println(" Wrong credentials.");
                 return false;
             }
         } catch (SQLException e) {
-            System.out.println("❌ Login error: " + e.getMessage());
+            System.out.println(" Login error: " + e.getMessage());
             return false;
         }
     }
 
-    private static final String[][] TESTS = {
-        {"plate1.png", "12", "normal"},
-        {"plate2.jpg", "8", "protanopia"},
-        {"plate3.jpg", "6", "deuteranopia"},
-        {"plate4.jpg", "29", "tritanopia"},
-        {"plate5.jpg", "5", "protanopia"},
-        {"plate6.png", "2", "deuteranopia"},
-        {"plate7.jpg", "74", "protanopia"},
-        {"plate8.jpg", "45", "deuteranopia"},
-        {"plate9.png", "29", "tritanopia"},
-        {"plate10.jpg", "15", "tritanopia"}
-    };
+   private static final String[][] TESTS = {
+    {"plate1.png",  "12", "normal"},
+    {"plate2.jpg",  "8",  "protanopia"},
+    {"plate3.jpg",  "6",  "deuteranopia"},
+    {"plate4.jpg",  "29", "protanopia"},
+    {"plate5.jpg",  "5",  "deuteranopia"},
+    {"plate6.png",  "45", "protanopia"},
+    {"plate7.jpg",  "74", "deuteranopia"},
+    {"plate8.jpg",  "26", "protanopia"},
+    {"plate9.jpg",  "57", "deuteranopia"},
+    {"plate10.png", "97", "protanopia"},
+    {"plate11.png", "73", "deuteranopia"},
+    {"plate12.png", "16", "normal"},
+    {"plate13.png", "7",  "protanopia"},
+    {"plate14.png", "3",  "deuteranopia"},
+    {"plate15.jpg", "35", "protanopia"},
+    {"plate16.png", "23", "tritanopia"},
+    {"plate17.png", "12", "tritanopia"},
+    {"plate18.png", "26", "tritanopia"}
+};
 
     private static void runColorBlindnessTest() {
-        SwingUtilities.invokeLater(() -> {
-            final int totalPlates = TESTS.length;
-            final int[] index = {0};
-            final int[] protanopiaCount = {0}, deuteranopiaCount = {0}, tritanopiaCount = {0};
-            final int timePerPlateSeconds = 20;
-            final StringBuilder answersSB = new StringBuilder(); 
+    SwingUtilities.invokeLater(() -> {
+        final int totalPlates = TESTS.length;
+        final int[] index = {0};
+        final int[] protanopiaCount = {0}, deuteranopiaCount = {0}, tritanopiaCount = {0};
+        final StringBuilder answersSB = new StringBuilder();
 
-            JFrame frame = new JFrame("ColorAid - Color Vision Test");
-            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            frame.setSize(700, 600);
-            frame.setLocationRelativeTo(null);
+        JFrame frame = new JFrame("ColorAid - Color Vision Test");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(700, 600);
+        frame.setLocationRelativeTo(null);
 
-            JPanel topPanel = new JPanel(new BorderLayout());
-            JLabel title = new JLabel("Color Vision Test (Ishihara-style)", SwingConstants.CENTER);
-            title.setFont(new Font("Segoe UI", Font.BOLD, 18));
-            topPanel.add(title, BorderLayout.CENTER);
+        JPanel topPanel = new JPanel(new BorderLayout());
+        JLabel title = new JLabel("Color Vision Test (Ishihara-style)", SwingConstants.CENTER);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        topPanel.add(title, BorderLayout.CENTER);
 
-            JLabel progressLabel = new JLabel("Plate 1 of " + totalPlates, SwingConstants.CENTER);
-            topPanel.add(progressLabel, BorderLayout.SOUTH);
+        JLabel progressLabel = new JLabel("Plate 1 of " + totalPlates, SwingConstants.CENTER);
+        topPanel.add(progressLabel, BorderLayout.SOUTH);
 
-            JLabel imageLabel = new JLabel("", SwingConstants.CENTER);
-            imageLabel.setPreferredSize(new Dimension(600, 400));
+        JLabel imageLabel = new JLabel("", SwingConstants.CENTER);
+        imageLabel.setPreferredSize(new Dimension(600, 400));
 
-            JPanel bottomPanel = new JPanel(new BorderLayout(8, 8));
-            JLabel timerLabel = new JLabel("Time left: " + timePerPlateSeconds + "s", SwingConstants.CENTER);
-            bottomPanel.add(timerLabel, BorderLayout.NORTH);
+        JPanel bottomPanel = new JPanel(new BorderLayout(8, 8));
+        JTextField answerField = new JTextField();
+        answerField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        answerField.setHorizontalAlignment(SwingConstants.CENTER);
 
-            JTextField answerField = new JTextField();
-            answerField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-            answerField.setHorizontalAlignment(SwingConstants.CENTER);
+        JPanel controls = new JPanel(new FlowLayout());
+        JButton nextBtn = new JButton("Next");
+        JButton skipBtn = new JButton("Skip");
+        controls.add(skipBtn);
+        controls.add(nextBtn);
 
-            JPanel controls = new JPanel(new FlowLayout());
-            JButton nextBtn = new JButton("Next");
-            JButton skipBtn = new JButton("Skip");
-            controls.add(skipBtn);
-            controls.add(nextBtn);
+        bottomPanel.add(answerField, BorderLayout.CENTER);
+        bottomPanel.add(controls, BorderLayout.SOUTH);
 
-            bottomPanel.add(answerField, BorderLayout.CENTER);
-            bottomPanel.add(controls, BorderLayout.SOUTH);
+        frame.setLayout(new BorderLayout(10, 10));
+        frame.add(topPanel, BorderLayout.NORTH);
+        frame.add(imageLabel, BorderLayout.CENTER);
+        frame.add(bottomPanel, BorderLayout.SOUTH);
+        frame.setVisible(true);
 
-            frame.setLayout(new BorderLayout(10, 10));
-            frame.add(topPanel, BorderLayout.NORTH);
-            frame.add(imageLabel, BorderLayout.CENTER);
-            frame.add(bottomPanel, BorderLayout.SOUTH);
-            frame.setVisible(true);
+        Runnable showPlate = new Runnable() {
+            @Override
+            public void run() {
+                if (index[0] >= totalPlates) {
+                    frame.dispose();
+                    String result;
+                    if (protanopiaCount[0] >= 4)
+                        result = "Possible Protanopia (Red Color Blindness)";
+                    else if (deuteranopiaCount[0] >= 4)
+                        result = "Possible Deuteranopia (Green Color Blindness)";
+                    else if (tritanopiaCount[0] >= 2)
+                        result = "Possible Tritanopia (Blue Color Blindness)";
+                    else
+                        result = "Normal Color Vision";
 
-            final javax.swing.Timer[] countdown = new javax.swing.Timer[1];
-            final int[] secondsLeft = {timePerPlateSeconds};
-
-            Runnable showPlate = new Runnable() {
-                @Override
-                public void run() {
-                    if (index[0] >= totalPlates) {
-                        if (countdown[0] != null && countdown[0].isRunning()) countdown[0].stop();
-                        frame.dispose();
-                        String result;
-                        if (protanopiaCount[0] >= 3)
-                            result = "⚠️ Possible Protanopia (Red Color Blindness)";
-                        else if (deuteranopiaCount[0] >= 3)
-                            result = "⚠️ Possible Deuteranopia (Green Color Blindness)";
-                        else if (tritanopiaCount[0] >= 2)
-                            result = "⚠️ Possible Tritanopia (Blue Color Blindness)";
-                        else
-                            result = "✅ Normal Color Vision";
-                        saveTestResult(currentUsername, answersSB.toString(), result);
-
-                        String explanation = buildDetailedExplanation(protanopiaCount[0], deuteranopiaCount[0], tritanopiaCount[0], result);
-                        showResultWindowDetailed(result, explanation);
-                        return;
-                    }
-
-                    progressLabel.setText("Plate " + (index[0] + 1) + " of " + totalPlates);
-                    String[] test = TESTS[index[0]];
-                    String imgPath = test[0];
-                    try {
-                        BufferedImage img = ImageIO.read(new File(imgPath));
-                        if (img != null) {
-                            Image scaled = img.getScaledInstance(560, 420, Image.SCALE_SMOOTH);
-                            imageLabel.setIcon(new ImageIcon(scaled));
-                            imageLabel.setText("");
-                        } else {
-                            imageLabel.setIcon(null);
-                            imageLabel.setText("<html><center>Image not found:<br>" + imgPath + "</center></html>");
-                        }
-                    } catch (Exception ex) {
-                        imageLabel.setIcon(null);
-                        imageLabel.setText("<html><center>Cannot load image:<br>" + imgPath + "</center></html>");
-                    }
-
-                    answerField.setText("");
-                    answerField.requestFocusInWindow();
-                    secondsLeft[0] = timePerPlateSeconds;
-                    timerLabel.setText("Time left: " + secondsLeft[0] + "s");
-                    if (countdown[0] != null && countdown[0].isRunning()) countdown[0].stop();
-
-                    countdown[0] = new javax.swing.Timer(1000, e -> {
-                        secondsLeft[0]--;
-                        timerLabel.setText("Time left: " + secondsLeft[0] + "s");
-                        if (secondsLeft[0] <= 0) {
-                            countdown[0].stop();
-                            processAndAdvance("");
-                        }
-                    });
-                    countdown[0].start();
+                    saveTestResult(currentUsername, answersSB.toString(), result);
+                    String explanation = buildDetailedExplanation(
+                            protanopiaCount[0], deuteranopiaCount[0], tritanopiaCount[0], result);
+                    showResultWindowDetailed(result, explanation);
+                    return;
                 }
 
-                private void processAndAdvance(String userAns) {
-                    String[] test = TESTS[index[0]];
-                    String expected = test[1];
-                    String type = test[2];
-
-                    if (answersSB.length() > 0) answersSB.append(",");
-                    answersSB.append(userAns.isEmpty() ? "-" : userAns);
-
-                    if (!userAns.equals(expected)) {
-                        switch (type) {
-                            case "protanopia" -> protanopiaCount[0]++;
-                            case "deuteranopia" -> deuteranopiaCount[0]++;
-                            case "tritanopia" -> tritanopiaCount[0]++;
-                        }
-                    }
-
-                    index[0]++;
-                    SwingUtilities.invokeLater(this);
-                }
-            };
-
-            nextBtn.addActionListener(e -> {
-                if (countdown[0] != null && countdown[0].isRunning()) countdown[0].stop();
-                String ans = answerField.getText().trim();
+                progressLabel.setText("Plate " + (index[0] + 1) + " of " + totalPlates);
                 String[] test = TESTS[index[0]];
-                String expected = test[1];
-                String type = test[2];
-
-                if (answersSB.length() > 0) answersSB.append(",");
-                answersSB.append(ans.isEmpty() ? "-" : ans);
-
-                if (!ans.equals(expected)) {
-                    switch (type) {
-                        case "protanopia" -> protanopiaCount[0]++;
-                        case "deuteranopia" -> deuteranopiaCount[0]++;
-                        case "tritanopia" -> tritanopiaCount[0]++;
+                String imgPath = test[0];
+                try {
+                    BufferedImage img = ImageIO.read(new File(imgPath));
+                    if (img != null) {
+                        Image scaled = img.getScaledInstance(560, 420, Image.SCALE_SMOOTH);
+                        imageLabel.setIcon(new ImageIcon(scaled));
+                        imageLabel.setText("");
+                    } else {
+                        imageLabel.setIcon(null);
+                        imageLabel.setText("<html><center>Image not found:<br>" + imgPath + "</center></html>");
                     }
+                } catch (Exception ex) {
+                    imageLabel.setIcon(null);
+                    imageLabel.setText("<html><center>Cannot load image:<br>" + imgPath + "</center></html>");
                 }
+
+                answerField.setText("");
+                answerField.requestFocusInWindow();
+            }
+        };
+
+        nextBtn.addActionListener(e -> {
+            String ans = answerField.getText().trim();
+            String[] test = TESTS[index[0]];
+            String expected = test[1];
+            String type = test[2];
+
+        
+            if (answersSB.length() > 0) answersSB.append(",");
+            answersSB.append(ans.isEmpty() ? "-" : ans);
+
+            
+            if (ans.isEmpty()) {
+                System.out.println("Skipped plate " + (index[0] + 1) + " — not counted.");
                 index[0]++;
                 showPlate.run();
-            });
+                return;
+            }
 
-            skipBtn.addActionListener(e -> {
-                if (countdown[0] != null && countdown[0].isRunning()) countdown[0].stop();
-                String[] test = TESTS[index[0]];
-                switch (test[2]) {
+            
+            if (!ans.equalsIgnoreCase(expected)) {
+                switch (type.toLowerCase()) {
                     case "protanopia" -> protanopiaCount[0]++;
                     case "deuteranopia" -> deuteranopiaCount[0]++;
                     case "tritanopia" -> tritanopiaCount[0]++;
                 }
-                // record skip
-                if (answersSB.length() > 0) answersSB.append(",");
-                answersSB.append("-");
-                index[0]++;
-                showPlate.run();
-            });
+            }
 
+            index[0]++;
             showPlate.run();
         });
-    }
+
+        skipBtn.addActionListener(e -> {
+            if (answersSB.length() > 0) answersSB.append(",");
+            answersSB.append("-");
+            System.out.println("Skipped plate " + (index[0] + 1) + " — not counted.");
+            index[0]++;
+            showPlate.run();
+        });
+
+        showPlate.run();
+    });
+}
+
+
 
 private static void undoLastTestResult() {
     if (testHistory.isEmpty()) {
@@ -339,11 +312,11 @@ private static void undoLastTestResult() {
         int rows = ps.executeUpdate();
 
         if (rows > 0)
-            System.out.println("✅ Successfully undone last test result (ID " + lastId + ")");
+            System.out.println("Successfully undone last test result (ID " + lastId + ")");
         else
             System.out.println(" Could not find test result to undo.");
     } catch (SQLException e) {
-        System.out.println("❌ Undo failed: " + e.getMessage());
+        System.out.println(" Undo failed: " + e.getMessage());
     }
 }
 
@@ -364,10 +337,10 @@ private static void undoLastTestResult() {
         if (keys.next()) {
             int id = keys.getInt(1);
             testHistory.push(id);
-            System.out.println("💾 Test result saved (ID " + id + ") — added to undo history!");
+            System.out.println("Test result saved (ID " + id + ") — added to undo history!");
         }
     } catch (SQLException e) {
-        System.out.println("❌ Failed to save result: " + e.getMessage());
+        System.out.println("Failed to save result: " + e.getMessage());
     }
 }
 
@@ -391,23 +364,23 @@ private static void undoLastTestResult() {
                 String result = rs.getString("result");
                 String answers = rs.getString("answers");
 
-                System.out.println("📅 Date: " + date);
-                System.out.println("🧾 Result: " + result);
+                System.out.println(" Date: " + date);
+                System.out.println("Result: " + result);
 
                 if (answers != null && !answers.isEmpty()) {
-                    System.out.println("🔢 Answers: [" + answers + "]");
+                    System.out.println("Answers: [" + answers + "]");
                 }
 
                 System.out.println("───────────────────────────────────────────────");
             }
 
             if (!hasResults) {
-                System.out.println("⚠️ No previous test results found.");
+                System.out.println(" No previous test results found.");
                 System.out.println("───────────────────────────────────────────────");
             }
 
         } catch (SQLException e) {
-            System.out.println("❌ Error retrieving results: " + e.getMessage());
+            System.out.println(" Error retrieving results: " + e.getMessage());
         }
     }
 
@@ -448,11 +421,11 @@ private static void undoLastTestResult() {
         try {
             img = ImageIO.read(new File(path));
             if (img == null) {
-                System.out.println("❌ Image not found or format unsupported.");
+                System.out.println(" Image not found or format unsupported.");
                 return;
             }
         } catch (Exception e) {
-            System.out.println("❌ Cannot read image.");
+            System.out.println(" Cannot read image.");
             return;
         }
 
@@ -467,7 +440,7 @@ private static void undoLastTestResult() {
         int type;
         try { type = Integer.parseInt(sc.nextLine()); }
         catch (Exception e) { System.out.println("Invalid input."); return; }
-        if (type < 1 || type > 4) { System.out.println("❌ Invalid type."); return; }
+        if (type < 1 || type > 4) { System.out.println(" Invalid type."); return; }
 
         System.out.println("Processing image, please wait...");
 
@@ -482,12 +455,12 @@ private static void undoLastTestResult() {
             ImageIO.write(sim, "png", new File(base + "_" + names[type] + "_simulated.png"));
             ImageIO.write(cor, "png", new File(base + "_" + names[type] + "_corrected.png"));
             ImageIO.write(side, "png", new File(base + "_" + names[type] + "_comparison.png"));
-            System.out.println("✅ Generated simulated, corrected, and comparison images:");
+            System.out.println("Generated simulated, corrected, and comparison images:");
             System.out.println("   " + base + "_" + names[type] + "_simulated.png");
             System.out.println("   " + base + "_" + names[type] + "_corrected.png");
             System.out.println("   " + base + "_" + names[type] + "_comparison.png");
         } catch (Exception e) {
-            System.out.println("❌ Failed to save results.");
+            System.out.println("Failed to save results.");
         }
     }
 
@@ -596,5 +569,5 @@ private static void undoLastTestResult() {
     private static int clamp(int val) {
         return Math.max(0, Math.min(255, val));
     }
-    
+
 }
