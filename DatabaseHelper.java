@@ -36,7 +36,7 @@ public class DatabaseHelper {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
 
-            System.out.println("\n=== 🧠 All Saved Test Results ===");
+            System.out.println("\n=== All Saved Test Results ===");
             DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             DateTimeFormatter displayFormat = DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm a");
 
@@ -50,14 +50,14 @@ public class DatabaseHelper {
                 }
 
                 System.out.println("#" + rs.getInt("id") + " | " + formattedDate);
-                System.out.println("👤 User: " + rs.getString("username"));
-                System.out.println("🧩 Answers: " + rs.getString("answers"));
-                System.out.println("🎯 Result: " + rs.getString("result"));
+                System.out.println(" User: " + rs.getString("username"));
+                System.out.println(" Answers: " + rs.getString("answers"));
+                System.out.println(" Result: " + rs.getString("result"));
                 System.out.println("-----------------------------");
             }
 
         } catch (SQLException e) {
-            System.out.println("❌ Error retrieving results: " + e.getMessage());
+            System.out.println(" Error retrieving results: " + e.getMessage());
         }
     }
 }
