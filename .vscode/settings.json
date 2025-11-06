@@ -1,0 +1,9 @@
+{
+    "java.project.sourcePaths": [
+        "."
+    ],
+    "java.project.referencedLibraries": [
+        "c:\\ColorAidClean\\lib\\sqlite-jdbc-3.50.3.0.jar",
+        "c:\\ColorAidClean\\lib\\itextpdf-5.5.13.3.jar"
+    ]
+}
